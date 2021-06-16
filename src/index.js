@@ -22,13 +22,14 @@ const defaultConfig = {
   cosBaseDir: "auto_upload_ci",
   project: "",
   version: "",
+  subVersionDir: "",
   exclude: /.*\.html$/,
   enableLog: false,
   ignoreError: false,
   removeMode: true,
   useVersion: false,
   gzip: true,
-  options: undefined
+  options: undefined,
 };
 
 module.exports = class WebpackQcloudCOSPlugin {
@@ -52,7 +53,8 @@ module.exports = class WebpackQcloudCOSPlugin {
       ),
       removeMode: extraEnvBoolean(process.env.WEBPACK_QCCOS_PLUGIN_REMOVE_MODE),
       useVersion: extraEnvBoolean(process.env.WEBPACK_QCCOS_PLUGIN_USE_VERSION),
-      cosBaseDir: process.env.WEBPACK_QCCOS_PLUGIN_COS_BASE_DIR
+      cosBaseDir: process.env.WEBPACK_QCCOS_PLUGIN_COS_BASE_DIR,
+      subVersionDir: process.env.WEBPACK_QCCOS_PLUGIN_SUB_VERSION_DIR
     };
     this.config = _.mergeWith(
       _.cloneDeep(defaultConfig),
@@ -109,6 +111,9 @@ module.exports = class WebpackQcloudCOSPlugin {
         // version 获取成功，则添加version
         this.finalPrefix = `${this.finalPrefix}/${this.config.version}`;
       }
+    }
+    if (this.config.subVersionDir){
+        this.finalPrefix = `${this.finalPrefix}/${this.config.subVersionDir}`;
     }
     this.debug("使用的 COS 目录:", this.finalPrefix);
     return this.finalPrefix;
